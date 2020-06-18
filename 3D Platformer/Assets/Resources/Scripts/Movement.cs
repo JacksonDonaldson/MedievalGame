@@ -12,7 +12,7 @@ public class Movement : MonoBehaviour
     public Transform pT;
     public float camSpeed = 10;
     public double distance = 4d;
-    bool mode = true;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +20,7 @@ public class Movement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         
         
@@ -61,12 +61,23 @@ public class Movement : MonoBehaviour
         //rotate the camera such that it is always looking at the player (done)
         camT.LookAt(pT.position);
 
-        //todo(3): better movement
-        //find which direction is forward
-        //pT.eulerAngles = new Vector3(pT.eulerAngles.x, camT.eulerAngles.y, pT.eulerAngles.z);
-        //move the player around
-        rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * Time.deltaTime * speed);
-        rb.AddForce(Vector3.forward * Input.GetAxis("Vertical") * Time.deltaTime * speed);
+        //rotate the player so that when a direction is pressed, it looks in that direction and the camera is kept constant
+        Vector3 camPos = camT.localPosition;
+        if(Input.GetAxis("Horizontal")!=0f || Input.GetAxis("Vertical")!=0f)
+        {
+            pT.eulerAngles = new Vector3(pT.eulerAngles.x, camT.eulerAngles.y+180, pT.eulerAngles.z);
+            camT.localPosition = new Vector3(0, camT.localPosition.y, horizontalDistance);
+            camT.LookAt(pT.position);
+        }
+
+        //move the player around based on rotation
+        //using the players rotation, calculate the porportions of velocity
+        Vector3 velocity = (pT.right * Input.GetAxis("Horizontal") * Time.deltaTime * speed * -1f);
+        velocity += pT.forward * Input.GetAxis("Vertical") * Time.deltaTime * speed * -1f;
+        velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+        rb.velocity = velocity;
+        //rb.AddForce(pT.right * Input.GetAxis("Horizontal") * Time.deltaTime * speed * -1f);
+        //rb.AddForce(pT.forward * Input.GetAxis("Vertical") * Time.deltaTime * speed * -1f);
     }
     
 }
