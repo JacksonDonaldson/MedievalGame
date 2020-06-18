@@ -7,13 +7,12 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public float speed = 800f;
-    public float offsetY = 2f;
-    public float offsetX = 0f;
-    public float offsetZ = -3.5f;
     public Rigidbody rb;
     public Transform camT;
     public Transform pT;
-    
+    public float camSpeed = 10;
+    public double distance = 4d;
+    bool mode = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,42 +22,34 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         //set camera position based on where the player is
         //todo(2): enable the player to rotate the camera around the player through mouse movement (probably quite difficult)
-        //camT.position = new Vector3(pT.position.x + offsetX, pT.position.y + offsetY, pT.position.z + offsetZ);
 
-        //todo(1): rotate the camera such that it is always looking at the player (not too hard)
-        float x = camT.position.x - pT.position.x;
-        float y = camT.position.y - pT.position.y;
-        float z = camT.position.z - pT.position.z;
-        // do some trig to figure out what angle to look at
-        pointTo(x, y, z);
+        //camT.RotateAround(pT.position, Vector3.up, 50 * Time.deltaTime);
+        //todo(1): rotate the camera such that it is always looking at the player (done)
+        float horizontal = Input.GetAxis("Mouse X") * camSpeed * Time.deltaTime;
+        float vertical = Input.GetAxis("Mouse Y") * camSpeed * Time.deltaTime;
+        
+        float x = camT.localPosition.x - horizontal;
+
+        if (x > 4)
+        {
+            x = 4;
+        }
+        if (x < -4)
+        {
+            x = -4;
+        }
+        
+        float z = (float)Math.Pow((Math.Pow(distance, 2d) - Math.Pow((double)x, 2)), 0.5d); 
+        camT.localPosition = new Vector3(x, 0, z);
+        camT.LookAt(pT.position);
+
         //todo(3): better movement
         //move the player around
         rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * Time.deltaTime * speed);
         rb.AddForce(Vector3.forward * Input.GetAxis("Vertical") * Time.deltaTime * speed);
     }
-    void pointTo(float x, float y, float z)
-    {
-        double rotY;
-        double rotX;
-        float horizontalDistance = (float)Math.Pow((Math.Pow(x,2) + Math.Pow(z,2)),0.5f);
-        rotX = Math.Atan(y / horizontalDistance);
-        rotX = rotX * 180 / Math.PI;
-        rotY = Math.Atan(x/z);
-        rotY = rotY * 180 / Math.PI;
-        print(rotX);
-        if (z <= 0)
-        {
-            camT.eulerAngles = new Vector3((float)rotX, (float)rotY, camT.eulerAngles.z);
-        }
-        else
-        {
-            camT.eulerAngles = new Vector3((float)rotX, (float)rotY + 180, camT.eulerAngles.z);
-
-        }
-        
-
-
-    }
+    
 }
