@@ -14,7 +14,7 @@ public class Movement : MonoBehaviour
     public float gravMult = 4f;
     public float gravity = -9.8f;
     //how many jumps the player currently has
-    int jumps = 1;
+    public int jumps = 1;
     //max number of jumps (doesn't work rn, just in case of future implementation
     int jumpMax = 1;
     //divisor for how well the player can be controlled in the air
@@ -24,13 +24,14 @@ public class Movement : MonoBehaviour
     //used to slow to a stop (a bit odd, ask Jackson if it doesn't work as intended)
     public float friction = 75f;
     //various other 1 use variables
+    public float jumpableNormal;
     Vector3 velocity = new Vector3(0, 0, 0);
     Vector3 yVelocity = new Vector3(0, 0, 0);
     Vector3 currentVelocity = new Vector3(0, 0, 0);
     public bool isGrounded;
     float lastTime = 0f;
     float smallDistance = 0.5f;
-    float smallTime = 0.1f;
+    float smallTime = 0.01f;
     Vector3 shouldBe;
     CharacterController cc;
     Transform pT;
@@ -109,36 +110,40 @@ public class Movement : MonoBehaviour
 
 
         //jump/gravity controls
-        //mostly done - known bug: movement down slopes is jittery. being caused by teleporting into the ground I think
+        //mostly done, no known bugs
         
         //raycast to find the ground from where the player is
         RaycastHit hit;
-        if (Physics.CapsuleCast(pT.position, pT.position, cc.radius, Vector3.down, out hit, smallDistance))
+        if (Physics.CapsuleCast(pT.position, pT.position, cc.radius-0.01f, Vector3.down, out hit, smallDistance))
         {
-            
-            //check if it's been a little while since we snapped to the ground (prevent it happening right after jumping)
-            if (Time.time - lastTime > smallTime)
+
+            //check to make sure its a surface we can walk on
+            if (Vector3.Angle(hit.normal, Vector3.up) < jumpableNormal)
             {
+                isGrounded = true;
                 
-                //check to make sure its a surface we can walk on (needs work) 
-                if (hit.normal.y > 0f)
+                //check if it's been a little while since we snapped to the ground (prevent it happening right after jumping)
+                if (Time.time - lastTime > smallTime)
                 {
+                    //now able to jump, and snap to the ground
+                    jumps = jumpMax;
+                    cc.Move(Vector3.down * hit.distance + Vector3.down * cc.height * .5f);
+                    jumps = jumpMax;
+                    yVelocity.y = 0f;
+                    lastTime = Time.time;
                     
-                    //if we weren't grounded before, snap to the ground
-                    if (!isGrounded)
-                    {
-                        cc.Move(Vector3.down * hit.distance + Vector3.down * cc.height * .5f);
-                        jumps = jumpMax;
-                        yVelocity.y = 0f;
-                        lastTime = Time.time;
-                    }
                     
                 }
 
 
             }
+            else
+            {
+                //if the slope was too steep, push away(slide down it)
+                cc.Move(hit.normal * 0.02f);
+            }
             //set grounded to true if it hits at all
-            isGrounded = true;
+            
         }
         else
         {
