@@ -55,9 +55,9 @@ public class Camera : MonoBehaviour
         //rotate the camera such that it is always looking at the player (done)
         camT.LookAt(pT.position);
 
-        //rotate the player so that when a direction is pressed, it looks in that direction and the camera is kept constant
+        //rotate the player with the camera. The camera is kept constant
         Vector3 camPos = camT.localPosition;
-        if (Input.GetAxis("Horizontal") != 0f || Input.GetAxis("Vertical") != 0f)
+        if ((Input.GetAxis("Horizontal") != 0f || Input.GetAxis("Vertical") != 0f) || Math.Abs(pT.eulerAngles.y - camT.eulerAngles.y)>30)
         {
             pT.eulerAngles = new Vector3(pT.eulerAngles.x, camT.eulerAngles.y + 180, pT.eulerAngles.z);
             camT.localPosition = new Vector3(0, camT.localPosition.y, horizontalDistance);
