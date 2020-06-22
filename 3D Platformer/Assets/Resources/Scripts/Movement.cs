@@ -20,18 +20,18 @@ public class Movement : MonoBehaviour
     //divisor for how well the player can be controlled in the air
     public float airControl = 25f;
     public float jumpForce = 9f;
-    public float airFriction = 10f;
+    public float airFriction = 0f;
     //used to slow to a stop (a bit odd, ask Jackson if it doesn't work as intended)
     public float friction = 75f;
     //various other 1 use variables
-    public float jumpableNormal;
+    public float jumpableNormal = 45f;
     Vector3 velocity = new Vector3(0, 0, 0);
     Vector3 yVelocity = new Vector3(0, 0, 0);
     Vector3 currentVelocity = new Vector3(0, 0, 0);
     public bool isGrounded;
     float lastTime = 0f;
-    float smallDistance = 0.5f;
-    float smallTime = 0.01f;
+    public float smallDistance = 0.2f;
+    public float smallTime = 0.6f;
     Vector3 shouldBe;
     CharacterController cc;
     Transform pT;
@@ -41,7 +41,7 @@ public class Movement : MonoBehaviour
         cc = GetComponent<CharacterController>();
         pT = GetComponent<Transform>();
         shouldBe = pT.position;
-        
+        smallDistance = smallDistance / pT.localScale.x;
     }
 
     // Update is called once per frame
@@ -49,16 +49,16 @@ public class Movement : MonoBehaviour
     {
         //move the player around based on rotation
         //using the players rotation, calculate the porportions of velocity
+        
         velocity = new Vector3(0, 0, 0);
-        velocity += (pT.right * Input.GetAxis("Horizontal") * -1f * 999f);
-        velocity += pT.forward * Input.GetAxis("Vertical") * -1f * 999f;
+        velocity += (pT.right * Input.GetAxis("Horizontal") * 999f);
+        velocity += (pT.forward * Input.GetAxis("Vertical") * 999f);
         
 
         //if velocity is not 0 (if a button is being pressed)
         if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
         {
             
-
             //make it so that velocity represents how much of each direction to go in
             velocity = new Vector3(velocity.x / (Math.Abs(velocity.x) + Math.Abs(velocity.z)), 0, velocity.z / (Math.Abs(velocity.x) + Math.Abs(velocity.z)));
             //multiply by speed
@@ -114,9 +114,8 @@ public class Movement : MonoBehaviour
         
         //raycast to find the ground from where the player is
         RaycastHit hit;
-        if (Physics.CapsuleCast(pT.position, pT.position, cc.radius-0.01f, Vector3.down, out hit, smallDistance))
+        if (Physics.CapsuleCast(pT.position, pT.position, cc.radius-0.01f, Vector3.down, out hit, smallDistance + cc.height / 2))
         {
-
             //check to make sure its a surface we can walk on
             if (Vector3.Angle(hit.normal, Vector3.up) < jumpableNormal)
             {
