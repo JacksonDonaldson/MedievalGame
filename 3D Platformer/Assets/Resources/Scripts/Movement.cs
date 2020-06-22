@@ -154,6 +154,7 @@ public class Movement : MonoBehaviour
         {
             if (jumps > 0)
             {
+                
                 yVelocity.y += jumpForce;
                 isGrounded = false;
                 jumps -= 1;
