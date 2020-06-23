@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -42,8 +42,16 @@ public class Movement : MonoBehaviour
         pT = GetComponent<Transform>();
         shouldBe = pT.position;
         smallDistance = smallDistance / pT.localScale.x;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        print("loaded");
+        pT = GameObject.Find("Player").GetComponent<Transform>();
+        pT.transform.position = Load.loadPos;
     }
-
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        print(Load.loadPos);
+        
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
