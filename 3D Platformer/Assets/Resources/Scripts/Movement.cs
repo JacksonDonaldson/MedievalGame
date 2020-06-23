@@ -45,11 +45,14 @@ public class Movement : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         print("loaded");
         pT = GameObject.Find("Player").GetComponent<Transform>();
+        print(Load.loadPos);
+        cc.enabled = false;
         pT.transform.position = Load.loadPos;
+        cc.enabled = true;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        print(Load.loadPos);
+        
         
     }
     // Update is called once per frame

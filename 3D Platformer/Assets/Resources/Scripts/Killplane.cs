@@ -8,6 +8,7 @@ public class Killplane : MonoBehaviour
     void OnTriggerEnter(Collider col)
     {
         print('1');
+        Load.loadPos = new Vector3(0, 30, 0);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         
     }
