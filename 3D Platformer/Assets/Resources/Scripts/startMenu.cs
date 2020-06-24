@@ -7,7 +7,8 @@ public class startMenu : MonoBehaviour
 {
     public void playButton()
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Player");
+        SceneManager.LoadScene("Room1", LoadSceneMode.Additive);
     }
 
     public void quitButton()

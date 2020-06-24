@@ -43,10 +43,9 @@ public class Movement : MonoBehaviour
         shouldBe = pT.position;
         smallDistance = smallDistance / pT.localScale.x;
         SceneManager.sceneLoaded += OnSceneLoaded;
-        print("loaded");
         pT = GameObject.Find("Player").GetComponent<Transform>();
-        print(Load.loadPos);
         cc.enabled = false;
+        Load.loadPos = new Vector3(0, 5, 0);
         pT.transform.position = Load.loadPos;
         cc.enabled = true;
     }
