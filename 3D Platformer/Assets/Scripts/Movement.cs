@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
+    //where the player should start off at
+    public static Vector3 startPos;
     //player base speed
     public float speed = 500f;
     //maximum speed, used for air movement only
@@ -45,8 +47,7 @@ public class Movement : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         pT = GameObject.Find("Player").GetComponent<Transform>();
         cc.enabled = false;
-        Load.loadPos = new Vector3(0, 5, 0);
-        pT.transform.position = Load.loadPos;
+        pT.transform.position = startPos;
         cc.enabled = true;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
